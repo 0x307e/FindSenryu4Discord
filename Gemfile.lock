@@ -1,0 +1,50 @@
+GEM
+  remote: https://rubygems.org/
+  specs:
+    discordrb (3.2.1)
+      discordrb-webhooks (~> 3.2.0.1)
+      opus-ruby
+      rbnacl (~> 3.4.0)
+      rest-client
+      websocket-client-simple (>= 0.3.0)
+    discordrb-webhooks (3.2.0.1)
+      rest-client
+    domain_name (0.5.20180417)
+      unf (>= 0.0.5, < 1.0.0)
+    event_emitter (0.2.6)
+    ffi (1.9.25)
+    http-cookie (1.0.3)
+      domain_name (~> 0.5)
+    ikku (0.1.4)
+      natto
+    mime-types (3.2.2)
+      mime-types-data (~> 3.2015)
+    mime-types-data (3.2018.0812)
+    natto (1.1.1)
+      ffi (>= 1.9.0)
+    netrc (0.11.0)
+    opus-ruby (1.0.1)
+      ffi
+    rbnacl (3.4.0)
+      ffi
+    rest-client (2.0.2)
+      http-cookie (>= 1.0.2, < 2.0)
+      mime-types (>= 1.16, < 4.0)
+      netrc (~> 0.8)
+    unf (0.1.4)
+      unf_ext
+    unf_ext (0.0.7.5)
+    websocket (1.2.8)
+    websocket-client-simple (0.3.0)
+      event_emitter
+      websocket
+
+PLATFORMS
+  ruby
+
+DEPENDENCIES
+  discordrb
+  ikku
+
+BUNDLED WITH
+   1.16.2
