@@ -16,6 +16,10 @@ RUN curl -L -o mecab-ipadic-2.7.0-20070801.tar.gz "https://drive.google.com/uc?e
   && ./configure --with-charset=utf8 \
   && make \
   && make install
+RUN ldconfig
+RUN git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git neologd \
+  && cd neologd \
+  && ./bin/install-mecab-ipadic-neologd -n -y
 
 # Ruby
 WORKDIR /app
