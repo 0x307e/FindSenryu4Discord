@@ -11,7 +11,7 @@ end
 
 bot.message do |event|
 author_id = event.author.id
-  if author_id == !config['bot_id']
+  if author_id == !config['client_id']
     return
   else
     haikureviewer = Ikku::Reviewer.new
