@@ -22,4 +22,4 @@ WORKDIR /app
 COPY . /app
 VOLUME /app/data
 RUN bundle install
-CMD ruby -Ku bot.rb
+CMD bundle exec ruby -Ku bot.rb
