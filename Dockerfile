@@ -25,7 +25,8 @@ RUN git clone --depth 1 https://github.com/neologd/mecab-ipadic-neologd.git /mec
 
 # Ruby
 WORKDIR /app
-COPY . /app
-VOLUME /app/data
+COPY Gemfile /app/Gemfile
+COPY Gemfile.lock /app/Gemfile.lock
 RUN bundle install
+COPY . /app
 CMD bundle exec ruby -Ku bot.rb
