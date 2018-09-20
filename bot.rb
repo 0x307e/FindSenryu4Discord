@@ -2,11 +2,11 @@ require 'yaml'
 require 'ikku'
 require 'discordrb'
 
-config = YAML.load_file("config.yml")
+config = YAML.load_file('config.yml')
 bot = Discordrb::Commands::CommandBot.new token: config['token'], client_id: config['client_id'], prefix: config['prefix']
 
 bot.ready do
-  bot.game = "俳句検出"
+  bot.game = '俳句検出'
 end
 
 bot.message do |event|
