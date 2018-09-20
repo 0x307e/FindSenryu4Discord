@@ -16,14 +16,10 @@ bot.message do |event|
   else
     haikureviewer = Ikku::Reviewer.new
     haiku = haikureviewer.find(event.content)
-    if haiku then
-      event.send_message("<@#{author_id}> 俳句を検出しました！\n「#{haiku.phrases[0].join("")} #{haiku.phrases[1].join("")} #{haiku.phrases[2].join("")}」")
-    end
     tankareviewer = Ikku::Reviewer.new(rule: [5, 7, 5, 7, 7])
     tanka = tankareviewer.find(event.content)
-    if tanka then
-      event.send_message("<@#{author_id}> 短歌を検出しました！\n「#{tanka.phrases[0].join("")} #{tanka.phrases[1].join("")} #{tanka.phrases[2].join("")} #{tanka.phrases[3].join("")} #{tanka.phrases[4].join("")}」")
-    end
+    event.send_message("<@#{author_id}> 俳句を検出しました！\n「#{haiku.phrases[0].join("")} #{haiku.phrases[1].join("")} #{haiku.phrases[2].join("")}」") if haiku
+    event.send_message("<@#{author_id}> 短歌を検出しました！\n「#{tanka.phrases[0].join("")} #{tanka.phrases[1].join("")} #{tanka.phrases[2].join("")} #{tanka.phrases[3].join("")} #{tanka.phrases[4].join("")}」") if tanka
   end
 end
 
