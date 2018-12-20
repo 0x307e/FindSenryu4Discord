@@ -13,6 +13,8 @@ bot.message do |event|
   author_id = event.author.id
   if author_id == !config['client_id']
     return
+  elsif event.content == "詠むな"
+    event.send_message("<@#{author_id}> 詠んでるのはお前やぞ")
   else
     senryureviewer = Ikku::Reviewer.new
     senryu = senryureviewer.find(event.content)
