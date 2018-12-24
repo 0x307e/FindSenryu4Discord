@@ -1,3 +1,3 @@
-FROM mongo:4.1.6
+FROM mongo:3.7.1
 
 COPY ./addUser.js /docker-entrypoint-initdb.d/

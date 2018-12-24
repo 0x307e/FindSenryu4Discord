@@ -1,6 +1,6 @@
 version: '3'
 services:
-  api:
+  bot:
     build: .
     restart: always
     links:
@@ -10,5 +10,7 @@ services:
     restart: always
     environment:
       - MONGO_INITDB_DATABASE=senryu
+    ports:
+      - '27017:27017'
     volumes:
       - './db:/data/db'
