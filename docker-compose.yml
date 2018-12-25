@@ -1,0 +1,16 @@
+version: '3'
+services:
+  bot:
+    build: .
+    restart: always
+    links:
+      - db
+  db:
+    build: ./mongo
+    restart: always
+    environment:
+      - MONGO_INITDB_DATABASE=senryu
+    ports:
+      - '27017:27017'
+    volumes:
+      - './db:/data/db'
