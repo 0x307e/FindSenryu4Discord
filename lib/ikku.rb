@@ -47,4 +47,3 @@ def tanka(event)
     return
   end
 end
-
