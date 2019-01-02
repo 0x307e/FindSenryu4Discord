@@ -1,3 +1,4 @@
+require 'pp'
 require_relative './lib/require.rb'
 
 bot = @bot
@@ -11,6 +12,8 @@ bot.message do |event|
   author_id = event.author.id
   if author_id == !config['client_id']
     return
+  elsif event.server == nil
+    event.send_message('個チャはダメです')
   elsif event.content == "詠め"
     ikkus = []
     @collection.find('server.id' => event.server.id).each { |row|
