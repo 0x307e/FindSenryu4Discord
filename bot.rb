@@ -14,9 +14,9 @@ bot.message do |event|
   elsif event.content == "詠め"
     ikkus = []
     @collection.find('server.id' => event.server.id).each { |row|
-      ikkus.push(row['sentence'].join(' '))
+      ikkus.push(row['sentence'])
     }
-    event.send_message("ここで一句\n「#{ikkus.sample}」")
+    event.send_message("ここで一句\n「#{ikkus.shuffle.shuffle.shuffle.sample[0]} #{ikkus.shuffle.shuffle.shuffle.sample[1]} #{ikkus.shuffle.shuffle.shuffle.sample[2]}」")
   elsif event.content == "詠むな"
     event.send_message("<@#{author_id}> 詠んでるのはお前やぞ")
   else
