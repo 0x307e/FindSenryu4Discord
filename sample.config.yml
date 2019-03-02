@@ -1,3 +1,11 @@
-token:
-client_id:
-prefix:
+discord:
+  token: ''
+  prefix: ''
+  client_id: ''
+mongo:
+  db_host: ''
+  db_port: ''
+  db: ''
+redis:
+  db_host: ''
+  db_port: ''
