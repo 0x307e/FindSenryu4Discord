@@ -9,5 +9,6 @@
 # Config
 config.yml
 
-#db
+# db
 db
+redis

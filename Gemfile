@@ -1,5 +1,6 @@
 source "https://rubygems.org"
 
-gem "ikku"
+gem 'ikku'
+gem 'redis'
 gem 'mongo'
-gem "discordrb"
+gem 'discordrb'

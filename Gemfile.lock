@@ -1,6 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
+    bson (4.4.2)
     discordrb (3.2.1)
       discordrb-webhooks (~> 3.2.0.1)
       opus-ruby
@@ -20,6 +21,8 @@ GEM
     mime-types (3.2.2)
       mime-types-data (~> 3.2015)
     mime-types-data (3.2018.0812)
+    mongo (2.7.1)
+      bson (>= 4.4.2, < 5.0.0)
     natto (1.1.1)
       ffi (>= 1.9.0)
     netrc (0.11.0)
@@ -27,6 +30,7 @@ GEM
       ffi
     rbnacl (3.4.0)
       ffi
+    redis (4.1.0)
     rest-client (2.0.2)
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
@@ -45,6 +49,8 @@ PLATFORMS
 DEPENDENCIES
   discordrb
   ikku
+  mongo
+  redis
 
 BUNDLED WITH
-   1.16.2
+   1.17.2
