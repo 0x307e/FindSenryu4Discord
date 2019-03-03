@@ -26,7 +26,9 @@ bot.message do |event|
     if last_poet == nil
       event.send_message('まだ誰も詠んでないぞ')
     elsif last_poet == config['discord']['client_id']
-      event.send_message("最後に詠んだのは俺やぞ")
+      event.send_message('最後に詠んだのは俺やぞ')
+    elsif last_poet.to_i == author_id.to_i
+      event.send_message("<@#{author_id}> 最後に詠んだのはお前やぞ")
     else
       event.send_message("最後に詠んだのは<@#{@redis.get event.server.id}>やぞ")
     end
