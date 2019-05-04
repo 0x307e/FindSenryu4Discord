@@ -18,7 +18,6 @@ bot.ready do
 end
 
 bot.message do |event|
-  config = @config
   author_id = event.author.id
   if author_id == !config['discord']['client_id']
     return
@@ -26,27 +25,39 @@ bot.message do |event|
     event.send_message('個チャはダメです')
   elsif event.content == '詠め'
     ikkus = []
-    @collection.find('server.id' => event.server.id).each { |row|
-      ikkus.push(row['sentence'])
-    }
-    event.send_message("ここで一句\n「#{ikkus.shuffle.shuffle.shuffle.sample[0]} #{ikkus.shuffle.shuffle.shuffle.sample[1]} #{ikkus.shuffle.shuffle.shuffle.sample[2]}」")
-    @redis.set event.server.id, config['discord']['client_id']
+    senryus = Senryu.where(server_id: event.server.id)
+    kamigo = []
+    nakashichi = []
+    simogo = []
+    author = []
+    senryus.each do |row|
+      kamigo.push(row[:sentence][:kamigo])
+      nakashichi.push(row[:sentence][:nakashichi])
+      simogo.push(row[:sentence][:simogo])
+      author.push(row[:author_name])
+    end
+    unless author.length == 0
+      event.send_message("ここで一句\n「#{kamigo.shuffle.shuffle.shuffle.sample} #{nakashichi.shuffle.shuffle.shuffle.sample} #{simogo.shuffle.shuffle.shuffle.sample}」\n詠み手: #{author.sort.uniq.join(', ')}")
+    else
+      event.send_message('先に誰か詠め')
+    end
   elsif event.content == '詠むな'
-    last_poet = @redis.get event.server.id
+    lp = redis.get("server/#{event.server.id}/last_poet")
+    last_poet = Senryu.find(lp) unless lp == nil
     if last_poet == nil
       event.send_message('まだ誰も詠んでないぞ')
-    elsif last_poet == config['discord']['client_id']
-      event.send_message('最後に詠んだのは俺やぞ')
-    elsif last_poet.to_i == author_id.to_i
-      event.send_message("<@#{author_id}> 最後に詠んだのはお前やぞ")
+    elsif last_poet[:author_id].to_i == author_id.to_i
+      event.send_message("<@#{author_id}> お前が「#{last_poet[:sentence].values.join(' ')}」と詠んだのが最後やぞ")
     else
-      event.send_message("最後に詠んだのは<@#{@redis.get event.server.id}>やぞ")
+      event.send_message("<@#{last_poet[:author_id]}> が「#{last_poet[:sentence].values.join(' ')}」と詠んだのが最後やぞ")
     end
   else
     senryu = senryu(event)
     if senryu
-      event.channel.send_message("<@#{author_id}> 川柳を検出しました！\n「#{senryu[:sentence].join(' ')}」") if senryu
-      @redis.set event.server.id, author_id
+      event.channel.send_message("<@#{author_id}> 川柳を検出しました！\n「#{senryu[:sentence].values.join(' ')}」") if senryu
+      redis.set("server/#{event.server.id}/last_poet", senryu[:id])
+      redis.zincrby("server/#{event.server.id}/rank", 1, author_id)
+      redis.zincrby("user/#{author_id}/rank", 1, event.server.id)
     end
   end
 end
