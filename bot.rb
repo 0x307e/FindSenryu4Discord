@@ -1,6 +1,17 @@
-require_relative './lib/require.rb'
+require 'yaml'
+require 'ikku'
+require 'json'
+require 'mongo'
+require 'redis'
+require 'discordrb'
+require 'securerandom'
 
-bot = @bot
+Dir.glob('lib/*').each { |r| require_relative r}
+Dir.glob('model/*').each { |r| require_relative r}
+
+config = YAML.load_file('config.yml')
+redis = Redis.new(host: config['redis']['db_host'], port: config['redis']['db_port'])
+bot = Discordrb::Commands::CommandBot.new token: config['discord']['token'], client_id: config['discord']['client_id'], prefix: config['discord']['prefix']
 
 bot.ready do
   bot.game = '川柳&短歌検出'
