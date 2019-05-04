@@ -101,18 +101,12 @@ bot.message do |event|
   elsif event.content == '詠め'
     ikkus = []
     senryus = Senryu.where(server_id: event.server.id)
-    kamigo = []
-    nakashichi = []
-    simogo = []
-    author = []
-    senryus.each do |row|
-      kamigo.push(row[:sentence][:kamigo])
-      nakashichi.push(row[:sentence][:nakashichi])
-      simogo.push(row[:sentence][:simogo])
-      author.push(row[:author_name])
-    end
-    unless author.length == 0
-      event.send_message("ここで一句\n「#{kamigo.shuffle.shuffle.shuffle.sample} #{nakashichi.shuffle.shuffle.shuffle.sample} #{simogo.shuffle.shuffle.shuffle.sample}」\n詠み手: #{author.sort.uniq.join(', ')}")
+    kamigo_random = senryus[0..senryus.length].shuffle.shuffle.shuffle.sample
+    nakashichi_random = senryus[0..senryus.length].shuffle.shuffle.shuffle.sample
+    simogo_random = senryus[0..senryus.length].shuffle.shuffle.shuffle.sample
+    authors = [kamigo_random[:author_name], nakashichi_random[:author_name], simogo_random[:author_name]]
+    unless senryus.length == 0
+      event.send_message("ここで一句\n「#{kamigo_random[:sentence][:kamigo]} #{nakashichi_random[:sentence][:nakashichi]} #{simogo_random[:sentence][:simogo]}」\n詠み手: #{authors.sort.uniq.join(', ')}")
     else
       event.send_message('先に誰か詠め')
     end
