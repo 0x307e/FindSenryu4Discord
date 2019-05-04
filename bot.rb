@@ -17,6 +17,78 @@ bot.ready do
   bot.game = '川柳&短歌検出'
 end
 
+bot.command :rank do |event|
+  unless event.server == nil
+    # サーバーのとき
+    rank = redis.zrevrange("server/#{event.server.id}/rank", 0, 3, withscores: true)
+    ranks = []
+    rank.each do |r|
+      senryu = Senryu.where(author_id: r[0]).first
+      ranks.push(
+        score: r[1].to_i,
+        author_name: senryu[:author_name],
+        author_id: senryu[:author_id]
+      )
+    end
+    event.send_embed do |embed|
+      embed.title = "サーバー内ランキング"
+      embed.colour = color()
+      ranks.each.with_index(1) do |r, i|
+        embed.add_field(
+          name: "#{i}位: #{r[:score]}回",
+          value: r[:author_name],
+          inline: true
+        )
+      end
+      embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: 'https://media.makotia.me/img/icons/haiku_bot.png')
+      embed.footer = Discordrb::Webhooks::EmbedFooter.new(
+        text: 'This bot was made by makotia.',
+        icon_url: 'https://media.makotia.me/img/icons/makotia.jpg'
+      )
+      embed.author = Discordrb::Webhooks::EmbedAuthor.new(
+        name: event.author.name,
+        url: "https://discordapp.com/channels/@me/#{event.author.id}",
+        icon_url: event.author.avatar_url
+      )
+      embed.timestamp = Time.new
+    end
+  else
+    # 個チャの場合
+    rank = redis.zrevrange("user/#{event.author.id}/rank", 0, 3, withscores: true)
+    ranks = []
+    rank.each do |r|
+      senryu = Senryu.where(server_id: r[0]).first
+      ranks.push(
+        score: r[1].to_i,
+        server_name: senryu[:server_name],
+        server_id: senryu[:server_id]
+      )
+    end
+    event.send_embed do |embed|
+      embed.title = "サーバーランキング"
+      embed.colour = color()
+      ranks.each.with_index(1) do |r, i|
+        embed.add_field(
+          name: "#{i}位: #{r[:score]}回",
+          value: r[:server_name],
+          inline: true
+        )
+      end
+      embed.thumbnail = Discordrb::Webhooks::EmbedThumbnail.new(url: 'https://media.makotia.me/img/icons/haiku_bot.png')
+      embed.footer = Discordrb::Webhooks::EmbedFooter.new(
+        text: 'This bot was made by makotia.',
+        icon_url: 'https://media.makotia.me/img/icons/makotia.jpg'
+      )
+      embed.author = Discordrb::Webhooks::EmbedAuthor.new(
+        name: event.author.name,
+        url: "https://discordapp.com/channels/@me/#{event.author.id}",
+        icon_url: event.author.avatar_url
+      )
+      embed.timestamp = Time.new
+    end
+  end
+end
+
 bot.message do |event|
   author_id = event.author.id
   if author_id == !config['discord']['client_id']
