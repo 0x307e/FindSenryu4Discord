@@ -1,0 +1,12 @@
+development:
+  clients:
+    default:
+      database: 'senryu'
+      hosts:
+        - mongo:27017
+test:
+  clients:
+    default:
+      database: 'senryu'
+      hosts:
+        - localhost:27017
