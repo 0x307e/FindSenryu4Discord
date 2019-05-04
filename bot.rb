@@ -91,8 +91,11 @@ end
 
 bot.message do |event|
   author_id = event.author.id
+  prefix = config['discord']['prefix']
   if author_id == !config['discord']['client_id']
-    return
+    next
+  elsif event.content =~ /#{prefix}.*/
+    next
   elsif event.server == nil
     event.send_message('個チャはダメです')
   elsif event.content == '詠め'
