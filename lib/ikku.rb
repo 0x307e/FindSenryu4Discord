@@ -1,23 +1,20 @@
-require_relative './require.rb'
-
 def senryu(event)
   senryureviewer = Ikku::Reviewer.new
   senryu = senryureviewer.find(event.content)
   if senryu
     data = {
-      type: 'senryu',
-      sentence: [
-        senryu.phrases[0].join(""),
-        senryu.phrases[1].join(""),
-        senryu.phrases[2].join("")
-      ],
-      server: {
-        id: event.server.id,
-        name: event.server.name
-      }
+      id: SecureRandom.hex,
+      sentence: {
+        kamigo: senryu.phrases[0].join,
+        nakashichi: senryu.phrases[1].join,
+        simogo: senryu.phrases[2].join
+      },
+      author_id: event.author.id,
+      author_name: event.author.name,
+      server_id: event.server.id,
+      server_name: event.server.name
     }
-    @collection.insert_one(data) if @collection.find('sentence' => data[:sentence])
-    @collection.insert_one(data) if @collection.find('sentence' => data[:sentence])
+    Senryu.create(data)
     data
   else
     return
