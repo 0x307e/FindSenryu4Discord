@@ -13,7 +13,7 @@ config = YAML.load_file('config.yml')
 redis = Redis.new(host: config['redis']['db_host'], port: config['redis']['db_port'])
 bot = Discordrb::Commands::CommandBot.new token: config['discord']['token'], client_id: config['discord']['client_id'], prefix: config['discord']['prefix']
 
-medals = ['', ':first_place:', ':second_place:', 'third_place', ':military_medal:', ':military_medal:']
+medals = ['', ':first_place:', ':second_place:', ':third_place:', ':military_medal:', ':military_medal:']
 
 bot.ready do
   bot.game = '川柳&短歌検出'
