@@ -54,6 +54,7 @@ GEM
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
     thread_safe (0.3.6)
+    to-bool (1.2.0)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
     unf (0.1.4)
@@ -73,6 +74,7 @@ DEPENDENCIES
   mongoid
   rake
   redis
+  to-bool
 
 BUNDLED WITH
    1.17.2

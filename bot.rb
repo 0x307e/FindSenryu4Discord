@@ -3,6 +3,7 @@ require 'ikku'
 require 'json'
 require 'mongo'
 require 'redis'
+require 'to-bool'
 require 'discordrb'
 require 'securerandom'
 
@@ -17,6 +18,20 @@ medals = ['', ':first_place:', ':second_place:', ':third_place:', ':military_med
 
 bot.ready do
   bot.game = '川柳&短歌検出'
+end
+
+bot.command :mute do |event, status|
+  case status
+  when 'on'
+    redis.set("channel/#{event.channel.id}/mute", true)
+    event.send_message("<@#{event.author.id}> によって検出が停止されました")
+  when 'off'
+    redis.set("channel/#{event.channel.id}/mute", false)
+    event.send_message("<@#{event.author.id}> によって検出が再開されました")
+  when 'status'
+    s = redis.get("channel/#{event.channel.id}/mute") || false
+    event.send_message("現在このチャンネルはミュートされていま#{s.to_bool ? 'す' : 'せん'}")
+  end
 end
 
 bot.command :rank do |event|
@@ -92,9 +107,12 @@ bot.command :rank do |event|
 end
 
 bot.message do |event|
+  mute_status = (redis.get("channel/#{event.channel.id}/mute") || false).to_bool
   author_id = event.author.id
   prefix = config['discord']['prefix']
   if author_id == !config['discord']['client_id']
+    next
+  elsif mute_status
     next
   elsif event.content =~ /#{prefix}.*/
     next
