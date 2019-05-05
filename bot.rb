@@ -13,6 +13,8 @@ config = YAML.load_file('config.yml')
 redis = Redis.new(host: config['redis']['db_host'], port: config['redis']['db_port'])
 bot = Discordrb::Commands::CommandBot.new token: config['discord']['token'], client_id: config['discord']['client_id'], prefix: config['discord']['prefix']
 
+medals = ['', ':first_place:', ':second_place:', 'third_place', ':military_medal:', ':military_medal:']
+
 bot.ready do
   bot.game = '川柳&短歌検出'
 end
@@ -20,7 +22,7 @@ end
 bot.command :rank do |event|
   unless event.server == nil
     # サーバーのとき
-    rank = redis.zrevrange("server/#{event.server.id}/rank", 0, 3, withscores: true)
+    rank = redis.zrevrange("server/#{event.server.id}/rank", 0, 4, withscores: true)
     ranks = []
     rank.each do |r|
       senryu = Senryu.where(author_id: r[0]).first
@@ -35,7 +37,7 @@ bot.command :rank do |event|
       embed.colour = color()
       ranks.each.with_index(1) do |r, i|
         embed.add_field(
-          name: "#{i}位: #{r[:score]}回",
+          name: "#{medals[i]} 第#{i}位: #{r[:score]}回",
           value: r[:author_name],
           inline: true
         )
