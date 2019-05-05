@@ -48,7 +48,7 @@ bot.command :rank do |event|
       embed.author = Discordrb::Webhooks::EmbedAuthor.new(
         name: event.author.name,
         url: "https://discordapp.com/channels/@me/#{event.author.id}",
-        icon_url: event.author.avatar_url
+        icon_url: event.author.avatar_url.sub(/(.*)webp/m, '\1png')
       )
       embed.timestamp = Time.new
     end
