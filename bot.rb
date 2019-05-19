@@ -1,3 +1,4 @@
+require 'pp'
 require 'yaml'
 require 'ikku'
 require 'json'
@@ -113,6 +114,8 @@ bot.message do |event|
   if author_id == !config['discord']['client_id']
     next
   elsif mute_status
+    next
+  elsif event.author.bot_account?
     next
   elsif event.content =~ /#{prefix}.*/
     next
