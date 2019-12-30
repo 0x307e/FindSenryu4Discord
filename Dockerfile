@@ -1,4 +1,4 @@
-FROM ruby:2.6.4
+FROM ruby:2.7.0
 # MeCab
 WORKDIR /mecab/
 RUN curl -L -o mecab-0.996.tar.gz "https://drive.google.com/uc?export=download&id=0B4y35FiV1wh7cENtOXlicTFaRUE" \
