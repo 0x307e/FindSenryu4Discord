@@ -1,11 +1,6 @@
 # General
 .DS_Store
 
-## Environment normalization:
-/.bundle/
-/vendor/bundle
-/lib/bundler/man/
-
 # Config
 config.yml
 
