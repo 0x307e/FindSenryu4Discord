@@ -2,8 +2,11 @@
 .DS_Store
 
 # Config
-config.yml
+config.toml
 
 # db
 db
 redis
+
+FindSenryu4Discord
+*.out
