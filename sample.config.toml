@@ -3,12 +3,3 @@ Token    = ""
 Prefix   = ""
 Playing  = ""
 ClientID = 0
-
-[Mongo]
-Host = ""
-DB   = "senryu"
-Port = 0
-
-[Redis]
-Host = ""
-Port = 0
