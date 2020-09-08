@@ -1,14 +1,11 @@
 # General
 .DS_Store
 
-## Environment normalization:
-/.bundle/
-/vendor/bundle
-/lib/bundler/man/
-
 # Config
-config.yml
+config.toml
 
 # db
-db
-redis
+data/
+
+FindSenryu4Discord
+*.out
