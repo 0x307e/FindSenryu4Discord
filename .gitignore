@@ -5,8 +5,7 @@
 config.toml
 
 # db
-db
-redis
+data/
 
 FindSenryu4Discord
 *.out
