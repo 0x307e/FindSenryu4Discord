@@ -1,6 +1,9 @@
 package db
 
 import (
+	"log"
+	"os"
+
 	"github.com/jinzhu/gorm"
 	"github.com/makotia/FindSenryu4Discord/model"
 
@@ -16,6 +19,12 @@ var (
 
 // Init is initialize dbs from main function
 func Init() {
+	_, err := os.Stat("data")
+	if os.IsNotExist(err) {
+		if err := os.Mkdir("data", 0777); err != nil {
+			log.Fatal(err)
+		}
+	}
 	initDB()
 	initLedis()
 }
