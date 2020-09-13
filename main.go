@@ -38,6 +38,11 @@ func main() {
 	db.Init()
 
 	dg.UpdateStatus(1, conf.Discord.Playing)
+	fmt.Println("[Servers]")
+	for _, guild := range dg.State.Guilds {
+		fmt.Println(guild.Name)
+	}
+	fmt.Println("")
 
 	fmt.Println("Bot is now running.  Press CTRL-C to exit.")
 	sc := make(chan os.Signal, 1)
