@@ -20,25 +20,39 @@ func CreateSenryu(s model.Senryu) (model.Senryu, []error) {
 	return s, nil
 }
 
+// GetLastSenryu is get last senryu service.
+func GetLastSenryu(serverID string, userID string) (str string, errArr []error) {
+	s := model.Senryu{}
+	if errArr = db.DB.Where(&model.Senryu{ServerID: serverID}).Last(&s).GetErrors(); len(errArr) != 0 {
+		return "", errArr
+	}
+	if userID == s.AuthorID {
+		str = fmt.Sprintf("<@%s> お前", s.AuthorID)
+	} else {
+		str = fmt.Sprintf("<@%s> ", s.AuthorID)
+	}
+	str += fmt.Sprintf("が「%s %s %s」って詠んだのが最後やぞ", s.Kamigo, s.Nakasichi, s.Simogo)
+	return str, nil
+}
+
 // GenSenryu is generate senryu service.
 func GenSenryu(serverID string) (str string, errArr []error) {
 	var (
 		s []model.Senryu
-		n int = 2
+		n int
 	)
-	if errArr = db.DB.Where(&model.Senryu{ServerID: serverID}).Limit(3).Find(&s).GetErrors(); len(errArr) != 0 {
+	if errArr = db.DB.Where(&model.Senryu{ServerID: serverID}).Find(&s).GetErrors(); len(errArr) != 0 {
 		return "", errArr
 	}
 	if len(s) == 0 {
 		str = "まだ誰も詠んでいません。あなたが先に詠んでください。"
 	} else {
-		if len(s) < n {
-			n = len(s)
-		}
+		n = len(s)
+		arr := util.Shuffle(n)
 		senryu := []string{
-			s[util.Random(n)].Kamigo,
-			s[util.Random(n)].Nakasichi,
-			s[util.Random(n)].Simogo,
+			s[arr[0]].Kamigo,
+			s[arr[1]].Nakasichi,
+			s[arr[2]].Simogo,
 		}
 
 		str = fmt.Sprintf("ここで一句\n「%s」", strings.Join(senryu, " "))

@@ -48,6 +48,11 @@ func main() {
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
+	var (
+		senryu string
+		errArr []error
+	)
+
 	prefix := config.GetPrefix()
 	cmd := strings.Replace(m.Content, prefix, "", 1)
 	muted := service.IsMute(m.ChannelID)
@@ -66,26 +71,24 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		s.MessageReactionAdd(m.ChannelID, m.ID, "✅")
 	}
 
-	if m.Content == "詠め" {
-		var (
-			senryu string
-			errArr []error
-		)
+	switch m.Content {
+	case "詠め":
 		if senryu, errArr = service.GenSenryu(m.GuildID); len(errArr) != 0 {
 			s.MessageReactionAdd(m.ChannelID, m.ID, "❌")
 		}
 		s.ChannelMessageSend(m.ChannelID, senryu)
+	case "詠むな":
+		if senryu, errArr = service.GetLastSenryu(m.GuildID, m.Author.ID); len(errArr) != 0 {
+			s.MessageReactionAdd(m.ChannelID, m.ID, "❌")
+		}
+		s.ChannelMessageSend(m.ChannelID, senryu)
 	}
-
-	fmt.Println(muted)
 
 	if !muted {
 		if m.Author.ID != s.State.User.ID {
 			h := haiku.Find(m.Content, []int{5, 7, 5})
 			if len(h) != 0 {
 				senryu := strings.Split(h[0], " ")
-				fmt.Println(senryu)
-				fmt.Println(len(senryu))
 				service.CreateSenryu(
 					model.Senryu{
 						ServerID:  m.GuildID,
