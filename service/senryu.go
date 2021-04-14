@@ -2,11 +2,12 @@ package service
 
 import (
 	"fmt"
+	"math/rand"
 	"strings"
+	"time"
 
 	"github.com/makotia/FindSenryu4Discord/db"
 	"github.com/makotia/FindSenryu4Discord/model"
-	"github.com/makotia/FindSenryu4Discord/util"
 )
 
 // CreateSenryu is create senryu service.
@@ -48,11 +49,11 @@ func GenSenryu(serverID string) (str string, errArr []error) {
 		str = "まだ誰も詠んでいません。あなたが先に詠んでください。"
 	} else {
 		n = len(s)
-		arr := util.Shuffle(n)
+		rand.Seed(time.Now().UnixNano())
 		senryu := []string{
-			s[arr[0]].Kamigo,
-			s[arr[1]].Nakasichi,
-			s[arr[2]].Simogo,
+			s[rand.Intn(n)].Kamigo,
+			s[rand.Intn(n)].Nakasichi,
+			s[rand.Intn(n)].Simogo,
 		}
 
 		str = fmt.Sprintf("ここで一句\n「%s」", strings.Join(senryu, " "))
