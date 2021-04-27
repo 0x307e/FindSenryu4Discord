@@ -37,7 +37,7 @@ func main() {
 
 	db.Init()
 
-	dg.UpdateStatus(1, conf.Discord.Playing)
+	dg.UpdateGameStatus(1, conf.Discord.Playing)
 	fmt.Println("[Servers]")
 	for _, guild := range dg.State.Guilds {
 		fmt.Println(guild.Name)
@@ -86,7 +86,15 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		if senryu, errArr = service.GetLastSenryu(m.GuildID, m.Author.ID); len(errArr) != 0 {
 			s.MessageReactionAdd(m.ChannelID, m.ID, "❌")
 		}
-		s.ChannelMessageSend(m.ChannelID, senryu)
+		s.ChannelMessageSendReply(
+			m.ChannelID,
+			senryu,
+			&discordgo.MessageReference{
+				MessageID: m.ID,
+				ChannelID: m.ChannelID,
+				GuildID:   m.GuildID,
+			},
+		)
 	}
 
 	if !muted {
@@ -103,7 +111,15 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 						Simogo:    senryu[2],
 					},
 				)
-				s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("<@%s> 川柳を検出しました！\n「%s」", m.Author.ID, h[0]))
+				s.ChannelMessageSendReply(
+					m.ChannelID,
+					fmt.Sprintf("川柳を検出しました！\n「%s」", h[0]),
+					&discordgo.MessageReference{
+						MessageID: m.ID,
+						ChannelID: m.ChannelID,
+						GuildID:   m.GuildID,
+					},
+				)
 			}
 		}
 	}
