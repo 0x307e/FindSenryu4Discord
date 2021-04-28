@@ -28,7 +28,7 @@ func GetLastSenryu(serverID string, userID string) (str string, errArr []error) 
 		return "", errArr
 	}
 	if userID == s.AuthorID {
-		str = fmt.Sprintf("<@%s> お前", s.AuthorID)
+		str = "お前"
 	} else {
 		str = fmt.Sprintf("<@%s> ", s.AuthorID)
 	}
