@@ -8,10 +8,9 @@ require (
 	github.com/edsrzf/mmap-go v1.0.0 // indirect
 	github.com/golang/snappy v0.0.3 // indirect
 	github.com/gorilla/websocket v1.4.2 // indirect
-	github.com/ikawaha/kagome v1.11.2 // indirect
 	github.com/jinzhu/gorm v1.9.16
 	github.com/ledisdb/ledisdb v0.0.0-20200510135210-d35789ec47e6
-	github.com/mattn/go-haiku v0.0.1
+	github.com/makotia/go-haiku v0.0.0-20210427152827-5852fcf4d287
 	github.com/mattn/go-sqlite3 v1.14.7
 	github.com/pelletier/go-toml v1.9.0 // indirect
 	github.com/siddontang/go v0.0.0-20180604090527-bdc77568d726 // indirect

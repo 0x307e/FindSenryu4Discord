@@ -14,7 +14,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/makotia/FindSenryu4Discord/config"
-	"github.com/mattn/go-haiku"
+	"github.com/makotia/go-haiku"
 )
 
 func main() {
