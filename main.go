@@ -62,6 +62,17 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
+	ch, err := s.Channel(m.ChannelID)
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	if ch.Type != discordgo.ChannelTypeGuildText {
+		s.ChannelMessageSend(m.ChannelID, "個チャはダメです")
+		return
+	}
+
 	prefix := config.GetPrefix()
 	cmd := strings.Replace(m.Content, prefix, "", 1)
 	muted := service.IsMute(m.ChannelID)
