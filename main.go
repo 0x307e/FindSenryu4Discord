@@ -53,10 +53,7 @@ func main() {
 }
 
 func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
-	var (
-		senryu string
-		errArr []error
-	)
+	var errArr []error
 
 	if m.Author.Bot {
 		return
@@ -93,23 +90,46 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 
 	switch m.Content {
 	case "詠め":
-		if senryu, errArr = service.GenSenryu(m.GuildID); len(errArr) != 0 {
+		var senryus []model.Senryu
+		if senryus, errArr = service.GetThreeRandomSenryus(m.GuildID); len(errArr) != 0 {
 			s.MessageReactionAdd(m.ChannelID, m.ID, "❌")
+			return
 		}
-		s.ChannelMessageSend(m.ChannelID, senryu)
+		if len(senryus) == 0 {
+			s.ChannelMessageSend(m.ChannelID, "まだ誰も詠んでいません。あなたが先に詠んでください。")
+			return
+		}
+		var writers []string
+		for _, senryu := range senryus {
+			member, err := s.GuildMember(m.GuildID, senryu.AuthorID)
+			if err != nil {
+				continue
+			}
+			if member.Nick != "" {
+				writers = append(writers, member.Nick)
+			} else {
+				writers = append(writers, member.User.Username)
+			}
+		}
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("ここで一句\n「%s」\n詠み手: %s",
+			strings.Join([]string{
+				senryus[0].Kamigo,
+				senryus[1].Nakasichi,
+				senryus[2].Simogo,
+			}, " "), strings.Join(writers, ", ")))
+		return
 	case "詠むな":
+		var senryu string
 		if senryu, errArr = service.GetLastSenryu(m.GuildID, m.Author.ID); len(errArr) != 0 {
 			s.MessageReactionAdd(m.ChannelID, m.ID, "❌")
+			return
 		}
 		s.ChannelMessageSendReply(
 			m.ChannelID,
 			senryu,
-			&discordgo.MessageReference{
-				MessageID: m.ID,
-				ChannelID: m.ChannelID,
-				GuildID:   m.GuildID,
-			},
+			m.Reference(),
 		)
+		return
 	}
 
 	if !muted {
@@ -129,11 +149,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 				s.ChannelMessageSendReply(
 					m.ChannelID,
 					fmt.Sprintf("川柳を検出しました！\n「%s」", h[0]),
-					&discordgo.MessageReference{
-						MessageID: m.ID,
-						ChannelID: m.ChannelID,
-						GuildID:   m.GuildID,
-					},
+					m.Reference(),
 				)
 			}
 		}

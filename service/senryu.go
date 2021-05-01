@@ -3,7 +3,6 @@ package service
 import (
 	"fmt"
 	"math/rand"
-	"strings"
 	"time"
 
 	"github.com/makotia/FindSenryu4Discord/db"
@@ -36,27 +35,24 @@ func GetLastSenryu(serverID string, userID string) (str string, errArr []error) 
 	return str, nil
 }
 
-// GenSenryu is generate senryu service.
-func GenSenryu(serverID string) (str string, errArr []error) {
+// GetThreeRandomSenryus is generate senryu service.
+func GetThreeRandomSenryus(serverID string) (senryus []model.Senryu, errArr []error) {
 	var (
 		s []model.Senryu
 		n int
 	)
 	if errArr = db.DB.Where(&model.Senryu{ServerID: serverID}).Find(&s).GetErrors(); len(errArr) != 0 {
-		return "", errArr
+		return []model.Senryu{}, errArr
 	}
 	if len(s) == 0 {
-		str = "まだ誰も詠んでいません。あなたが先に詠んでください。"
+		return []model.Senryu{}, errArr
 	} else {
 		n = len(s)
 		rand.Seed(time.Now().UnixNano())
-		senryu := []string{
-			s[rand.Intn(n)].Kamigo,
-			s[rand.Intn(n)].Nakasichi,
-			s[rand.Intn(n)].Simogo,
-		}
-
-		str = fmt.Sprintf("ここで一句\n「%s」", strings.Join(senryu, " "))
+		return []model.Senryu{
+			s[rand.Intn(n)],
+			s[rand.Intn(n)],
+			s[rand.Intn(n)],
+		}, errArr
 	}
-	return str, errArr
 }
