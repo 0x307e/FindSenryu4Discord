@@ -72,6 +72,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
+	if handleYomeYomuna(m, s) {
+		return
+	}
+
 	if !service.IsMute(m.ChannelID) {
 		if m.Author.ID != s.State.User.ID {
 			h := haiku.Find(m.Content, []int{5, 7, 5})
@@ -118,6 +122,10 @@ func handleCommand(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 		return true
 	}
 
+	return false
+}
+
+func handleYomeYomuna(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 	var errArr []error
 	switch m.Content {
 	case "詠め":
