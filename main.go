@@ -97,39 +97,25 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 		if len(senryus) == 0 {
 			s.ChannelMessageSend(m.ChannelID, "まだ誰も詠んでいません。あなたが先に詠んでください。")
-			return
+		} else {
+			s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("ここで一句\n「%s」\n詠み手: %s",
+				strings.Join([]string{
+					senryus[0].Kamigo,
+					senryus[1].Nakasichi,
+					senryus[2].Simogo,
+				}, " "), strings.Join(getWriters(senryus, m.GuildID, s), ", ")))
 		}
-		var writers []string
-		for _, senryu := range senryus {
-			member, err := s.GuildMember(m.GuildID, senryu.AuthorID)
-			if err != nil {
-				continue
-			}
-			if member.Nick != "" {
-				writers = append(writers, member.Nick)
-			} else {
-				writers = append(writers, member.User.Username)
-			}
-		}
-		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("ここで一句\n「%s」\n詠み手: %s",
-			strings.Join([]string{
-				senryus[0].Kamigo,
-				senryus[1].Nakasichi,
-				senryus[2].Simogo,
-			}, " "), strings.Join(writers, ", ")))
-		return
 	case "詠むな":
 		var senryu string
 		if senryu, errArr = service.GetLastSenryu(m.GuildID, m.Author.ID); len(errArr) != 0 {
 			s.MessageReactionAdd(m.ChannelID, m.ID, "❌")
-			return
+		} else {
+			s.ChannelMessageSendReply(
+				m.ChannelID,
+				senryu,
+				m.Reference(),
+			)
 		}
-		s.ChannelMessageSendReply(
-			m.ChannelID,
-			senryu,
-			m.Reference(),
-		)
-		return
 	}
 
 	if !muted {
@@ -154,4 +140,20 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 			}
 		}
 	}
+}
+
+func getWriters(senryus []model.Senryu, guildID string, session *discordgo.Session) []string {
+	var writers []string
+	for _, senryu := range senryus {
+		member, err := session.GuildMember(guildID, senryu.AuthorID)
+		if err != nil {
+			continue
+		}
+		if member.Nick != "" {
+			writers = append(writers, member.Nick)
+		} else {
+			writers = append(writers, member.User.Username)
+		}
+	}
+	return writers
 }
