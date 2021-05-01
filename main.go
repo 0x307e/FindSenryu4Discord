@@ -144,10 +144,7 @@ func handleCommand(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 					Inline: true,
 				})
 			}
-			_, err := s.ChannelMessageSendEmbed(m.ChannelID, &embed)
-			if err != nil {
-				fmt.Println(err)
-			}
+			s.ChannelMessageSendEmbed(m.ChannelID, &embed)
 		}
 		return true
 	}
