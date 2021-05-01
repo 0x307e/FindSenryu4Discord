@@ -1,14 +1,14 @@
 # FindSenryu4Discord
 
-<center>
+<p align="center">
   <img src="./.github/img/haiku.png" width="200" /><br />
   Discordで川柳を検出します
-</center>
+</p>
 
 ## Invite
 
-<center>
+<p align="center">
   <a href="https://discordapp.com/api/oauth2/authorize?client_id=480281065588785162&permissions=378880&scope=bot">
     <img width="400" src="./.github/img/discord-logo.png">
   </a>
-</center>
+</p>
