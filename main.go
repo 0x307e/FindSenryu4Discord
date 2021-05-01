@@ -96,6 +96,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 
+var medals = []string{"🥇", "🥈", "🥉", "🎖️", "🎖️"}
+
 func handleCommand(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 	prefix := config.GetPrefix()
 	cmd := strings.Replace(m.Content, prefix, "", 1)
@@ -114,6 +116,38 @@ func handleCommand(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 			s.MessageReactionAdd(m.ChannelID, m.ID, "❌")
 		} else {
 			s.MessageReactionAdd(m.ChannelID, m.ID, "✅")
+		}
+		return true
+	}
+
+	if strings.HasPrefix(cmd, "rank") {
+		var (
+			ranks  []service.RankResult
+			errArr []error
+		)
+		if ranks, errArr = service.GetRanking(m.GuildID); len(errArr) != 0 {
+			fmt.Println(errArr)
+		} else {
+			embed := discordgo.MessageEmbed{
+				Type:   discordgo.EmbedTypeRich,
+				Title:  "サーバー内ランキング",
+				Fields: []*discordgo.MessageEmbedField{},
+			}
+			for _, rank := range ranks {
+				user, err := s.User(rank.AuthorId)
+				if err != nil {
+					continue
+				}
+				embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
+					Name:   fmt.Sprintf("%s 第%d位: %d回", medals[rank.Rank-1], rank.Rank, rank.Count),
+					Value:  user.Username,
+					Inline: true,
+				})
+			}
+			_, err := s.ChannelMessageSendEmbed(m.ChannelID, &embed)
+			if err != nil {
+				fmt.Println(err)
+			}
 		}
 		return true
 	}

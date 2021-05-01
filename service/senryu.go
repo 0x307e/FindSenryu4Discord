@@ -56,3 +56,31 @@ func GetThreeRandomSenryus(serverID string) (senryus []model.Senryu, errArr []er
 		}, errArr
 	}
 }
+
+type RankResult struct {
+	Count    int
+	AuthorId string
+	Rank     int
+}
+
+func GetRanking(serverID string) ([]RankResult, []error) {
+	var ranks []RankResult
+	if errArr := db.DB.Table("senryus").Where(&model.Senryu{ServerID: serverID}).Group("author_id").Select("COUNT(TRUE) AS count, author_id").Order("count DESC").Find(&ranks).GetErrors(); len(errArr) != 0 {
+		return nil, errArr
+	}
+	var results []RankResult
+	var before RankResult
+	for i, rank := range ranks {
+		if rank.Count == before.Count {
+			rank.Rank = before.Rank
+		} else {
+			rank.Rank = i + 1
+		}
+		if rank.Rank > 5 {
+			break
+		}
+		results = append(results, rank)
+		before = rank
+	}
+	return results, []error{}
+}
