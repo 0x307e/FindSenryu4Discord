@@ -68,11 +68,7 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		return
 	}
 
-	if handleCommand(m, s) {
-		return
-	}
-
-	if handleYomeYomuna(m, s) {
+	if handleCommand(m, s) || handleYomeYomuna(m, s) {
 		return
 	}
 
