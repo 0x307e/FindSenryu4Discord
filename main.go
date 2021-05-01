@@ -58,6 +58,10 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		errArr []error
 	)
 
+	if m.Author.Bot {
+		return
+	}
+
 	prefix := config.GetPrefix()
 	cmd := strings.Replace(m.Content, prefix, "", 1)
 	muted := service.IsMute(m.ChannelID)
