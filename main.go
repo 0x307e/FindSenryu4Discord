@@ -129,8 +129,15 @@ func handleCommand(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 			fmt.Println(errArr)
 		} else {
 			embed := discordgo.MessageEmbed{
-				Type:   discordgo.EmbedTypeRich,
-				Title:  "サーバー内ランキング",
+				Type:  discordgo.EmbedTypeRich,
+				Title: "サーバー内ランキング",
+				Footer: &discordgo.MessageEmbedFooter{
+					Text:    "This bot was made by makotia.",
+					IconURL: "https://github.com/makotia.png",
+				},
+				Thumbnail: &discordgo.MessageEmbedThumbnail{
+					URL: s.State.User.AvatarURL(""),
+				},
 				Fields: []*discordgo.MessageEmbedField{},
 			}
 			for _, rank := range ranks {
