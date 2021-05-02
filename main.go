@@ -146,6 +146,10 @@ func handleRanking(m *discordgo.MessageCreate, s *discordgo.Session) {
 			Thumbnail: &discordgo.MessageEmbedThumbnail{
 				URL: s.State.User.AvatarURL(""),
 			},
+			Author: &discordgo.MessageEmbedAuthor{
+				Name:    m.Author.Username,
+				IconURL: m.Author.AvatarURL(""),
+			},
 			Fields: []*discordgo.MessageEmbedField{},
 		}
 		for _, rank := range ranks {
