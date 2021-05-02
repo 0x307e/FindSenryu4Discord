@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/makotia/FindSenryu4Discord/db"
 	"github.com/makotia/FindSenryu4Discord/model"
@@ -137,8 +138,9 @@ func handleRanking(m *discordgo.MessageCreate, s *discordgo.Session) {
 		fmt.Println(errArr)
 	} else {
 		embed := discordgo.MessageEmbed{
-			Type:  discordgo.EmbedTypeRich,
-			Title: "サーバー内ランキング",
+			Type:      discordgo.EmbedTypeRich,
+			Title:     "サーバー内ランキング",
+			Timestamp: time.Now().Format(time.RFC3339),
 			Footer: &discordgo.MessageEmbedFooter{
 				Text:    "This bot was made by makotia.",
 				IconURL: "https://github.com/makotia.png",
