@@ -121,42 +121,46 @@ func handleCommand(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 	}
 
 	if strings.HasPrefix(cmd, "rank") {
-		var (
-			ranks  []service.RankResult
-			errArr []error
-		)
-		if ranks, errArr = service.GetRanking(m.GuildID); len(errArr) != 0 {
-			fmt.Println(errArr)
-		} else {
-			embed := discordgo.MessageEmbed{
-				Type:  discordgo.EmbedTypeRich,
-				Title: "サーバー内ランキング",
-				Footer: &discordgo.MessageEmbedFooter{
-					Text:    "This bot was made by makotia.",
-					IconURL: "https://github.com/makotia.png",
-				},
-				Thumbnail: &discordgo.MessageEmbedThumbnail{
-					URL: s.State.User.AvatarURL(""),
-				},
-				Fields: []*discordgo.MessageEmbedField{},
-			}
-			for _, rank := range ranks {
-				user, err := s.User(rank.AuthorId)
-				if err != nil {
-					continue
-				}
-				embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
-					Name:   fmt.Sprintf("%s 第%d位: %d回", medals[rank.Rank-1], rank.Rank, rank.Count),
-					Value:  user.Username,
-					Inline: true,
-				})
-			}
-			s.ChannelMessageSendEmbed(m.ChannelID, &embed)
-		}
+		handleRanking(m, s)
 		return true
 	}
 
 	return false
+}
+
+func handleRanking(m *discordgo.MessageCreate, s *discordgo.Session) {
+	var (
+		ranks  []service.RankResult
+		errArr []error
+	)
+	if ranks, errArr = service.GetRanking(m.GuildID); len(errArr) != 0 {
+		fmt.Println(errArr)
+	} else {
+		embed := discordgo.MessageEmbed{
+			Type:  discordgo.EmbedTypeRich,
+			Title: "サーバー内ランキング",
+			Footer: &discordgo.MessageEmbedFooter{
+				Text:    "This bot was made by makotia.",
+				IconURL: "https://github.com/makotia.png",
+			},
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL: s.State.User.AvatarURL(""),
+			},
+			Fields: []*discordgo.MessageEmbedField{},
+		}
+		for _, rank := range ranks {
+			user, err := s.User(rank.AuthorId)
+			if err != nil {
+				continue
+			}
+			embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
+				Name:   fmt.Sprintf("%s 第%d位: %d回", medals[rank.Rank-1], rank.Rank, rank.Count),
+				Value:  user.Username,
+				Inline: true,
+			})
+		}
+		s.ChannelMessageSendEmbed(m.ChannelID, &embed)
+	}
 }
 
 func handleYomeYomuna(m *discordgo.MessageCreate, s *discordgo.Session) bool {
