@@ -7,6 +7,7 @@ import (
 	"os/signal"
 	"strings"
 	"syscall"
+	"time"
 
 	"github.com/makotia/FindSenryu4Discord/db"
 	"github.com/makotia/FindSenryu4Discord/model"
@@ -96,6 +97,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	}
 }
 
+var medals = []string{"🥇", "🥈", "🥉", "🎖️", "🎖️"}
+
 func handleCommand(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 	prefix := config.GetPrefix()
 	cmd := strings.Replace(m.Content, prefix, "", 1)
@@ -118,7 +121,52 @@ func handleCommand(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 		return true
 	}
 
+	if strings.HasPrefix(cmd, "rank") {
+		handleRanking(m, s)
+		return true
+	}
+
 	return false
+}
+
+func handleRanking(m *discordgo.MessageCreate, s *discordgo.Session) {
+	var (
+		ranks  []service.RankResult
+		errArr []error
+	)
+	if ranks, errArr = service.GetRanking(m.GuildID); len(errArr) != 0 {
+		fmt.Println(errArr)
+	} else {
+		embed := discordgo.MessageEmbed{
+			Type:      discordgo.EmbedTypeRich,
+			Title:     "サーバー内ランキング",
+			Timestamp: time.Now().Format(time.RFC3339),
+			Footer: &discordgo.MessageEmbedFooter{
+				Text:    "This bot was made by makotia.",
+				IconURL: "https://github.com/makotia.png",
+			},
+			Thumbnail: &discordgo.MessageEmbedThumbnail{
+				URL: s.State.User.AvatarURL(""),
+			},
+			Author: &discordgo.MessageEmbedAuthor{
+				Name:    m.Author.Username,
+				IconURL: m.Author.AvatarURL(""),
+			},
+			Fields: []*discordgo.MessageEmbedField{},
+		}
+		for _, rank := range ranks {
+			user, err := s.User(rank.AuthorId)
+			if err != nil {
+				continue
+			}
+			embed.Fields = append(embed.Fields, &discordgo.MessageEmbedField{
+				Name:   fmt.Sprintf("%s 第%d位: %d回", medals[rank.Rank-1], rank.Rank, rank.Count),
+				Value:  user.Username,
+				Inline: true,
+			})
+		}
+		s.ChannelMessageSendEmbed(m.ChannelID, &embed)
+	}
 }
 
 func handleYomeYomuna(m *discordgo.MessageCreate, s *discordgo.Session) bool {
