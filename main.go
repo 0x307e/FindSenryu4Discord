@@ -205,6 +205,17 @@ func handleYomeYomuna(m *discordgo.MessageCreate, s *discordgo.Session) bool {
 	return false
 }
 
+func sliceUnique(target []string) (unique []string) {
+	m := map[string]bool{}
+	for _, v := range target {
+		if !m[v] {
+			m[v] = true
+			unique = append(unique, v)
+		}
+	}
+	return unique
+}
+
 func getWriters(senryus []model.Senryu, guildID string, session *discordgo.Session) []string {
 	var writers []string
 	for _, senryu := range senryus {
@@ -218,5 +229,5 @@ func getWriters(senryus []model.Senryu, guildID string, session *discordgo.Sessi
 			writers = append(writers, member.User.Username)
 		}
 	}
-	return writers
+	return sliceUnique(writers)
 }
